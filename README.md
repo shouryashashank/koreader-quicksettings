@@ -1,7 +1,7 @@
 # koreader-quicksettings
 
 Custom Quick Settings patch for KOReader.
-
+![Quick Settings Screenshot 3](assets/image.png)
 ## Complete feature set
 
 This patch adds a dedicated Quick Settings tab at the far left of KOReader's top menu in both File Manager and Reader views, then extends that panel with configurable controls.
@@ -89,4 +89,4 @@ Remove `patches/2-quick-settings.lua` and the copied `icons/quick_*.svg` files f
 
 ![Quick Settings Screenshot 2](assets/settings2.png)
 
-![Quick Settings Screenshot 3](assets/image.png)
+
