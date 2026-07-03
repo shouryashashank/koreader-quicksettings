@@ -1,21 +1,48 @@
 # koreader-quicksettings
 
-Custom Quick Settings patch for KOReader with a cleaner control layout, custom icons, and improved frontlight/warmth interactions.
+Custom Quick Settings patch for KOReader.
 
-## What this patch does
+## Complete feature set
 
-This patch replaces and extends KOReader's quick settings panel behavior.
+This patch adds a dedicated Quick Settings tab at the far left of KOReader's top menu in both File Manager and Reader views, then extends that panel with configurable controls.
 
-Main changes include:
+Core features:
 
-- Modernized frontlight and warmth slider rows.
-- Custom tri-state icon controls for brightness and warmth (`off`, `mid`, `max`).
-- Optional show/hide of `+`/`-` slider controls from patch settings.
-- Better slider interaction (tap and swipe/pan handling in quick settings).
-- Custom quick settings icons bundled in the `icons/` directory.
-- Warmth row shown only on devices that support natural light.
+- New Quick Settings tab injected into both main menu contexts (File Manager and Reader).
+- Configurable top action-button row with reorder support.
+- Button visibility toggles from KOReader settings (enable/disable each quick action).
+- Optional "Always open on this tab" behavior.
 
-In short: it makes quick settings faster to use and more touch-friendly while keeping KOReader's patch-based workflow.
+Supported quick actions:
+
+- Wi-Fi toggle (shows active state and SSID label when available).
+- Night mode toggle.
+- Screen rotation action.
+- USB mass storage request.
+- Restart KOReader (with confirmation).
+- Exit KOReader (with confirmation).
+- Sleep / suspend / power-off action based on device capability.
+- File search.
+- Cloud storage.
+- Z-Library search.
+- Calibre wireless connect/disconnect with active-state indicator.
+- OPDS catalog entry.
+- Optional plugin actions: QuickRSS, NotionSync, Reading Streak.
+
+Frontlight and warmth controls:
+
+- Custom rounded slider rendering for a cleaner, high-contrast look.
+- Tap and swipe/pan gestures on sliders in the quick settings panel.
+- Tri-state icon controls for both brightness and warmth (`off`, `mid`, `max`).
+- Tri-state logic aligned with slider value boundaries.
+- Optional show/hide for `+` and `-` slider control buttons.
+- Slider expands when side controls are hidden.
+- Warmth section is conditionally shown only on devices with natural light support.
+
+Assets and theming:
+
+- Custom icon pack in `icons/` (including dedicated brightness and warmth tri-state icons).
+- Icons are loaded through KOReader's user icon lookup path.
 
 ## Reference
 
@@ -23,103 +50,38 @@ This has been blatantly copied from [qewer33/koreader-patches](https://github.co
 
 ## Installation
 
-### 1) Locate your KOReader user directory
+1. Find your KOReader user directory for your device.
+2. Copy `2-quick-settings.lua` into the `patches/` folder inside that KOReader directory.
+3. Copy all SVG files from this repo's `icons/` folder into KOReader's `icons/` folder.
+4. Fully restart KOReader.
 
-You need the **KOReader user folder** that contains `patches/`, `settings/`, and other runtime files.
+## KOReader folder locations (by device)
 
-Common locations:
+Use these as common defaults; exact paths can vary by install method.
 
-- **Linux desktop**: `~/.config/koreader/`
-- **Android**: `/sdcard/koreader/` or `/storage/emulated/0/koreader/`
-- **Kindle**: `/mnt/us/koreader/`
-- **Kobo**: `.adds/koreader/` on the device storage
-- **reMarkable / other Linux-based e-readers**: usually under the installed KOReader directory (often `koreader/` inside user storage)
+- Kindle: `/mnt/us/koreader/`
+- Kobo: `.adds/koreader/` (device storage root)
+- Android: `/storage/emulated/0/koreader/` or `/sdcard/koreader/`
+- Linux desktop: `~/.config/koreader/`
+- Other Linux-based readers: typically an app folder named `koreader/` in user storage
 
-If unsure, open KOReader once and search device storage for a folder named `koreader` containing a `settings/` directory.
+Inside that KOReader directory, this patch uses:
 
-### 2) Copy the patch file
+- `patches/2-quick-settings.lua`
+- `icons/*.svg`
 
-Create the patches folder if it does not exist, then copy:
+## Verify
 
-- Source: `2-quick-settings.lua`
-- Destination: `<koreader_user_dir>/patches/2-quick-settings.lua`
+After restart, open the Quick Settings tab and confirm:
 
-Example on Linux:
-
-```bash
-mkdir -p ~/.config/koreader/patches
-cp 2-quick-settings.lua ~/.config/koreader/patches/
-```
-
-### 3) Copy icons
-
-Copy all SVG icons from this repository's `icons/` folder to your KOReader icon folder:
-
-- Destination: `<koreader_user_dir>/icons/`
-
-Example on Linux:
-
-```bash
-mkdir -p ~/.config/koreader/icons
-cp -f icons/*.svg ~/.config/koreader/icons/
-```
-
-### 4) Restart KOReader
-
-Fully close KOReader and open it again so patch and icon changes are loaded.
-
-## Device-specific notes
-
-### Kindle
-
-- KOReader root is usually `/mnt/us/koreader/`.
-- Copy patch to `/mnt/us/koreader/patches/`.
-- Copy icons to `/mnt/us/koreader/icons/`.
-- If using USB transfer, safely eject before launching KOReader.
-
-### Kobo
-
-- KOReader is usually installed under `.adds/koreader/`.
-- Copy patch to `.adds/koreader/patches/`.
-- Copy icons to `.adds/koreader/icons/`.
-- On some setups, hidden folders must be enabled on your computer to see `.adds`.
-
-### Android
-
-- Common KOReader folder is `/storage/emulated/0/koreader/`.
-- Copy patch to `.../koreader/patches/`.
-- Copy icons to `.../koreader/icons/`.
-- You may need file manager permission for "All files access".
-
-### Linux desktop
-
-- Typical location is `~/.config/koreader/`.
-- Copy patch to `~/.config/koreader/patches/`.
-- Copy icons to `~/.config/koreader/icons/`.
-
-## Verify it loaded
-
-After restart, open Quick Settings and check:
-
-- Frontlight row uses custom slider and icon control.
-- Warmth row appears only on natural-light-capable devices.
-- Tri-state icon cycles values as expected.
-- Custom icons are visible (not default placeholders).
-
-If something does not appear:
-
-- Recheck file paths and names.
-- Confirm files copied into the correct KOReader user directory.
-- Restart KOReader again.
+- Action buttons are visible and respond.
+- Frontlight slider works and updates icon state.
+- Warmth slider appears only on natural-light devices.
+- Custom icons render instead of defaults.
 
 ## Uninstall
 
-Delete these files from your KOReader user directory:
-
-- `patches/2-quick-settings.lua`
-- Any copied `quick_*.svg` files you added from this repository
-
-Then restart KOReader.
+Remove `patches/2-quick-settings.lua` and the copied `icons/quick_*.svg` files from your KOReader user directory, then restart KOReader.
 
 ## Screenshots
 
