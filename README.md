@@ -1,87 +1,182 @@
 # koreader-quicksettings
 
 Custom Quick Settings patch for KOReader.
+
 ![Quick Settings Screenshot 3](assets/image.png)
+
 ## Complete feature set
 
-This patch adds a dedicated Quick Settings tab at the far left of KOReader's top menu in both File Manager and Reader views, then extends that panel with configurable controls.
+This patch adds a dedicated Quick Settings tab at the far left of KOReader's top menu (File Manager + Reader), and provides extensive customization for buttons, info bar, and icon packs.
 
-Core features:
+### Quick Settings tab
 
-- New Quick Settings tab injected into both main menu contexts (File Manager and Reader).
-- Configurable top action-button row with reorder support.
-- Button visibility toggles from KOReader settings (enable/disable each quick action).
-- Optional "Always open on this tab" behavior.
+- Injects a custom Quick Settings tab in both File Manager and Reader menus.
+- Optional `Always open on this tab` behavior.
+- Customizable tab icon (default icon, other-repo icon, and additional custom icons).
+- Works with KOReader icon lookup in user `icons/` directory.
 
-Supported quick actions:
+### Quick action buttons
 
-- Wi-Fi toggle (shows active state and SSID label when available).
-- Night mode toggle.
-- Screen rotation action.
-- USB mass storage request.
-- Restart KOReader (with confirmation).
-- Exit KOReader (with confirmation).
-- Sleep / suspend / power-off action based on device capability.
-- File search.
-- Cloud storage.
-- Z-Library search.
-- Calibre wireless connect/disconnect with active-state indicator.
-- OPDS catalog entry.
-- Optional plugin actions: QuickRSS, NotionSync, Reading Streak.
+- Reorder buttons (`Arrange buttons`).
+- Enable/disable each button from settings.
+- Grid layout controls:
+  - Rows: `1-3`
+  - Items per row: `1-10`
+- Show/hide text labels under button icons.
+- Button shape modes:
+  - `No shape`
+  - `Circle`
+  - `Square`
+  - `Squircle`
+  - `Pebble` (custom drawn)
+  - `Hexagon` (custom drawn)
+  - `Pentagon` (custom drawn)
+  - `Teardrop` (custom drawn)
+  - `Flower` (custom drawn)
+- `Reset button defaults` entry to restore button-related settings.
 
-Frontlight and warmth controls:
+### Supported quick actions
 
-- Custom rounded slider rendering for a cleaner, high-contrast look.
-- Tap and swipe/pan gestures on sliders in the quick settings panel.
+Core actions:
+
+- Wi-Fi toggle (active state + SSID label where available)
+- Night mode
+- Rotate
+- USB mass storage request
+- Restart (with confirm)
+- Exit (with confirm)
+- Sleep / suspend / power-off
+- File search
+- Cloud storage
+- Z-Library
+- Calibre wireless
+- OPDS catalog
+- NotionSync
+- Reading Streak
+- Frontlight toggle
+
+Additional icon-backed actions (plugin dependent):
+
+- Reading progress (`stats_progress`)
+- Reading calendar (`stats_calendar`)
+- Battery stats (`battery_stats`)
+- LocalSend
+- Connections
+- Puzzle
+- Crossword
+- Casual Chess
+- Chess
+- KOSync
+- FileBrowser+
+- BookFusion
+- Focus
+
+If a plugin/capability is not available, related buttons are hidden (or show an info message when applicable).
+
+### Frontlight and warmth controls
+
+- Rounded slider rendering.
+- Tap + swipe/pan interaction.
 - Tri-state icon controls for both brightness and warmth (`off`, `mid`, `max`).
-- Tri-state logic aligned with slider value boundaries.
-- Optional show/hide for `+` and `-` slider control buttons.
-- Slider expands when side controls are hidden.
-- Warmth section is conditionally shown only on devices with natural light support.
+- Optional show/hide for slider `+/-` controls.
+- Warmth section shown only on devices with natural-light support.
 
-Assets and theming:
+### Info bar (clock) settings
 
-- Custom icon pack in `icons/` (including dedicated brightness and warmth tri-state icons).
-- Icons are loaded through KOReader's user icon lookup path.
+Clock defaults on fresh install:
 
-## Reference
+- Format: `Weekday, DD Mon hh:MM` (`%a, %d %b %H:%M`)
+- Center aligned
+- Non-segmented stacked layout
 
-This has been blatantly copied from [qewer33/koreader-patches](https://github.com/qewer33/koreader-patches).
+Clock controls include:
+
+- Show/hide clock.
+- Primary and secondary custom format strings (`os.date` style).
+- Alignment (`left`, `center`, `right`).
+- Text layout (`small`, `big`, `big + small`).
+- Font family selection (presets + custom font name).
+- Font style (`regular`, `bold`, `italic`, `bold italic`) with fallback handling.
+- Big/small font size controls.
+- Header layouts:
+  - `stacked`
+  - `two columns`
+  - `three columns`
+- Segment content mapping (clock block / primary / secondary / info / empty).
+- Two-column split ratio presets + custom input.
+- Optional info line with selectable data items.
+- `Reset clock defaults` entry.
+
+### Clock info line data (selectable)
+
+- Reading progress
+- Page position
+- Book title
+- Time left
+- Battery
+- Wi-Fi
+- Frontlight
+- Warmth
+- Night mode
+- Rotation
+
+Clock refresh behavior adapts to format:
+
+- Per-second updates when `%S` is present
+- Otherwise minute-aligned updates
+
+## Icons and assets
+
+This repo includes a mixed icon pack (`.svg` and `.png`) in `icons/`, including:
+
+- Existing quick icons (`quick_*`)
+- Brightness and warmth tri-state icons
+- Additional icons from `renandeivison/quicksettings`
+- Extra custom icons for tab/icon experiments (e.g. `menu.svg`, `network_intelligence.svg`, etc.)
+
+## References
+
+- Original patch inspiration: [qewer33/koreader-patches](https://github.com/qewer33/koreader-patches)
+- Additional icon source: [renandeivison/quicksettings](https://github.com/renandeivison/quicksettings)
 
 ## Installation
 
-1. Find your KOReader user directory for your device.
-2. Copy `2-quick-settings.lua` into the `patches/` folder inside that KOReader directory.
-3. Copy all SVG files from this repo's `icons/` folder into KOReader's `icons/` folder.
+1. Find your KOReader user directory.
+2. Copy `2-quick-settings.lua` into `patches/`.
+3. Copy all files from this repo's `icons/` folder into KOReader's `icons/`.
 4. Fully restart KOReader.
 
-## KOReader folder locations (by device)
-
-Use these as common defaults; exact paths can vary by install method.
+## KOReader folder locations (common)
 
 - Kindle: `/mnt/us/koreader/`
-- Kobo: `.adds/koreader/` (device storage root)
+- Kobo: `.adds/koreader/`
 - Android: `/storage/emulated/0/koreader/` or `/sdcard/koreader/`
 - Linux desktop: `~/.config/koreader/`
-- Other Linux-based readers: typically an app folder named `koreader/` in user storage
 
-Inside that KOReader directory, this patch uses:
+Inside KOReader user directory:
 
 - `patches/2-quick-settings.lua`
-- `icons/*.svg`
+- `icons/*` (both `.svg` and `.png`)
 
 ## Verify
 
-After restart, open the Quick Settings tab and confirm:
+After restart:
 
-- Action buttons are visible and respond.
-- Frontlight slider works and updates icon state.
-- Warmth slider appears only on natural-light devices.
-- Custom icons render instead of defaults.
+- Quick Settings tab appears and opens.
+- Selected tab icon is visible.
+- Button grid/shape/label settings apply.
+- New icons render for enabled actions.
+- Frontlight/warmth sliders react to touch.
+- Clock/info bar settings apply (format, layout, fonts, info items).
 
 ## Uninstall
 
-Remove `patches/2-quick-settings.lua` and the copied `icons/quick_*.svg` files from your KOReader user directory, then restart KOReader.
+Remove:
+
+- `patches/2-quick-settings.lua`
+- Copied icons from `icons/` (both `.svg` and `.png`)
+
+Then restart KOReader.
 
 ## Screenshots
 
