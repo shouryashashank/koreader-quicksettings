@@ -180,12 +180,10 @@ Then restart KOReader.
 
 ## Screenshots
 
-![Quick Settings Screenshot 1](assets/settings1.png)
 
-![Quick Settings Screenshot 2](assets/settings2.png)
 
 <details>
-  <summary>More screenshots</summary>
+  <summary>screenshots</summary>
 
   ![Quick Settings Screenshot 3](assets/image.png)
 
@@ -196,6 +194,8 @@ Then restart KOReader.
   ![Quick Settings Screenshot 6](assets/image%20copy%203.png)
 
   ![Quick Settings Screenshot 7](assets/image%20copy%204.png)
+
+  ![Quick Settings Screenshot 1](assets/settings1.png)
 
   ![Quick Settings Screenshot 8](assets/image%20copy%205.png)
 
