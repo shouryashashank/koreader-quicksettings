@@ -191,17 +191,17 @@ Then restart KOReader.
 
   ![Quick Settings Screenshot 4](assets/imagec.png)
 
-  ![Quick Settings Screenshot 5](assets/image copy 2.png)
+  ![Quick Settings Screenshot 5](assets/image%20copy%202.png)
 
-  ![Quick Settings Screenshot 6](assets/image copy 3.png)
+  ![Quick Settings Screenshot 6](assets/image%20copy%203.png)
 
-  ![Quick Settings Screenshot 7](assets/image copy 4.png)
+  ![Quick Settings Screenshot 7](assets/image%20copy%204.png)
 
-  ![Quick Settings Screenshot 8](assets/image copy 5.png)
+  ![Quick Settings Screenshot 8](assets/image%20copy%205.png)
 
-  ![Quick Settings Screenshot 9](assets/image copy 6.png)
+  ![Quick Settings Screenshot 9](assets/image%20copy%206.png)
 
-  ![Quick Settings Screenshot 10](assets/image copy 7.png)
+  ![Quick Settings Screenshot 10](assets/image%20copy%207.png)
 
 </details>
 
