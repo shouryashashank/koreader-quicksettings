@@ -6,7 +6,7 @@ Custom Quick Settings patch for KOReader.
 
 ## Complete feature set
 
-This patch adds a dedicated Quick Settings tab at the far left of KOReader's top menu (File Manager + Reader), and provides extensive customization for buttons, info bar, and icon packs.
+This patch adds a dedicated Quick Settings tab at the far left of KOReader's top menu (File Manager + Reader), and provides extensive customization for buttons, info-bar, and icon packs.
 
 ### Quick Settings tab
 
