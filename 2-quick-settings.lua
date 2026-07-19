@@ -371,6 +371,8 @@ local config_default = {
         rotation = false,
     },
     open_on_start = false,
+    focus_mode_enabled = false,
+    focus_mode_hidden_tabs = {},
 }
 
 local config
@@ -512,6 +514,150 @@ end
 local function showPluginMissingMessage(text)
     local InfoMessage = require("ui/widget/infomessage")
     UIManager:show(InfoMessage:new{ text = text })
+end
+
+-- ============================================================
+-- Focus Mode
+-- ============================================================
+
+-- Known tab IDs and their display labels.
+-- QuickSettings tab (no ID) and FileBrowser tab (id="filemanager") are
+-- always protected and never shown in the dialog.
+local focus_known_tabs = {
+    { id = "filemanager_settings", label = _("File Browser Settings") },
+    { id = "setting",              label = _("Settings") },
+    { id = "tools",                label = _("Tools") },
+    { id = "search",               label = _("Search") },
+    { id = "main",                 label = _("Main") },
+    { id = "navi",                 label = _("Navigation") },
+    { id = "typeset",              label = _("Typesetting") },
+}
+
+local function getFocusHiddenSet()
+    local hidden_tabs = config.focus_mode_hidden_tabs
+    if type(hidden_tabs) ~= "table" then
+        return {}
+    end
+    local set = {}
+    for _, id in ipairs(hidden_tabs) do
+        set[id] = true
+    end
+    return set
+end
+
+local function isTabVisible(tab_id)
+    if not config.focus_mode_enabled then
+        return true
+    end
+    if not tab_id then
+        return true
+    end
+    local hidden = getFocusHiddenSet()
+    return not hidden[tab_id]
+end
+
+local function showFocusModeDialog(touch_menu)
+    -- Build all_tabs from hardcoded known IDs + dynamic extension
+    local known_ids = { quicksettings = true, filemanager = true }
+    local all_tabs = {}
+    for _, t in ipairs(focus_known_tabs) do
+        table.insert(all_tabs, { id = t.id, label = t.label })
+        known_ids[t.id] = true
+    end
+
+    local current_tabs = touch_menu.tab_item_table or {}
+    for _, tab in ipairs(current_tabs) do
+        local tid = tab.id or tab.icon or tab.name
+        if tid and not known_ids[tid] then
+            table.insert(all_tabs, { id = tid, label = tab.text or tid })
+            known_ids[tid] = true
+        end
+    end
+
+    local hidden_set = getFocusHiddenSet()
+    local toggle_state = {}
+    for _, t in ipairs(all_tabs) do
+        toggle_state[t.id] = hidden_set[t.id] or false
+    end
+
+    local dialog_ref = nil
+
+    local function rebuild()
+        if dialog_ref then
+            UIManager:close(dialog_ref)
+        end
+
+        local rows = {}
+        for _, t in ipairs(all_tabs) do
+            local is_hidden = toggle_state[t.id]
+            table.insert(rows, {
+                {
+                    text = (not is_hidden and "☑ " or "☐ ") .. t.label,
+                    callback = function()
+                        toggle_state[t.id] = not toggle_state[t.id]
+                        rebuild()
+                    end,
+                },
+            })
+        end
+
+        table.insert(rows, { { text = "----------------------------", enabled = false } })
+
+        local has_checked = false
+        for _, hidden in pairs(toggle_state) do
+            if hidden then
+                has_checked = true
+                break
+            end
+        end
+        if has_checked then
+            table.insert(rows, {
+                {
+                    text = _("Uncheck all"),
+                    callback = function()
+                        for id in pairs(toggle_state) do
+                            toggle_state[id] = false
+                        end
+                        rebuild()
+                    end,
+                },
+            })
+        end
+
+        table.insert(rows, {
+            {
+                text = _("Apply & Restart"),
+                callback = function()
+                    local to_hide = {}
+                    for id, hidden in pairs(toggle_state) do
+                        if hidden then
+                            table.insert(to_hide, id)
+                        end
+                    end
+                    config.focus_mode_hidden_tabs = to_hide
+                    config.focus_mode_enabled = true
+                    saveConfig()
+                    UIManager:broadcastEvent(Event:new("Restart"))
+                end,
+            },
+        })
+
+        table.insert(rows, {
+            {
+                text = _("Cancel"),
+                callback = function() end,
+            },
+        })
+
+        local ButtonDialog = require("ui/widget/buttondialog")
+        dialog_ref = ButtonDialog:new{
+            title = _("Focus Mode"),
+            buttons = rows,
+        }
+        UIManager:show(dialog_ref)
+    end
+
+    rebuild()
 end
 
 loadConfig()
@@ -1436,8 +1582,8 @@ local button_defs = {
     focus = {
         icon = "quick_focus",
         label = "Focus",
-        callback = function()
-            showPluginMissingMessage(_("Focus mode control is available in the quicksettings plugin build."))
+        callback = function(touch_menu)
+            showFocusModeDialog(touch_menu)
         end,
     },
 }
@@ -3158,6 +3304,26 @@ local function buildSettingsMenu()
                     saveConfig()
                 end,
             },
+            {
+                text = _("Focus Mode"),
+                sub_item_table = {
+                    {
+                        text = _("Enable Focus Mode"),
+                        checked_func = function() return config.focus_mode_enabled end,
+                        callback = function()
+                            config.focus_mode_enabled = not config.focus_mode_enabled
+                            saveConfig()
+                        end,
+                    },
+                    {
+                        text = _("Configure hidden tabs"),
+                        callback = function(touch_menu)
+                            showFocusModeDialog(touch_menu)
+                        end,
+                        separator = true,
+                    },
+                },
+            },
         },
     }
 end
@@ -3182,6 +3348,17 @@ function FileManagerMenu:setUpdateItemTable()
     if self.tab_item_table then
         table.insert(self.tab_item_table, 1, quick_settings_tab)
     end
+    if config.focus_mode_enabled and self.tab_item_table then
+        local filtered = {}
+        local hidden = getFocusHiddenSet()
+        for _, tab in ipairs(self.tab_item_table) do
+            local tid = tab.id
+            if not tid or not hidden[tid] then
+                table.insert(filtered, tab)
+            end
+        end
+        self.tab_item_table = filtered
+    end
 end
 
 local orig_reader_setUpdateItemTable = ReaderMenu.setUpdateItemTable
@@ -3194,5 +3371,16 @@ function ReaderMenu:setUpdateItemTable()
     orig_reader_setUpdateItemTable(self)
     if self.tab_item_table then
         table.insert(self.tab_item_table, 1, quick_settings_tab)
+    end
+    if config.focus_mode_enabled and self.tab_item_table then
+        local filtered = {}
+        local hidden = getFocusHiddenSet()
+        for _, tab in ipairs(self.tab_item_table) do
+            local tid = tab.id
+            if not tid or not hidden[tid] then
+                table.insert(filtered, tab)
+            end
+        end
+        self.tab_item_table = filtered
     end
 end

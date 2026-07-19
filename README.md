@@ -15,6 +15,15 @@ This patch adds a dedicated Quick Settings tab at the far left of KOReader's top
 - Customizable tab icon (default icon, other-repo icon, and additional custom icons).
 - Works with KOReader icon lookup in user `icons/` directory.
 
+### Focus Mode (tab filtering)
+
+- Hide unwanted top menu tabs to reduce clutter.
+- Toggle individually which tabs are visible/hidden per tab ID (not display text, so locale-safe).
+- Protected tabs (QuickSettings, File Browser) can never be hidden.
+- Uses known tab IDs + dynamic detection for plugin-added tabs.
+- Works in both File Manager and Reader menu.
+- Requires restart to apply changes.
+
 ### Quick action buttons
 
 - Reorder buttons (`Arrange buttons`).
